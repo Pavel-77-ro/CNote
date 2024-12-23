@@ -19,8 +19,18 @@ if (process.env.NODE_ENV !== 'test') {
     connectDB();
 }
 
+// CORS Configuration
+const corsOptions = {
+    origin: [
+        'http://localhost:3000', // Local frontend for development
+        'https://www.cnoteweb.com', // Deployed frontend
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true, // Allow cookies if needed
+};
+app.use(cors(corsOptions));
+
 // Middleware
-app.use(cors());
 app.use(bodyParser.json());
 
 // Routes
