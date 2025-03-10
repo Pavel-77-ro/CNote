@@ -1,1 +1,117 @@
 @import './base.css';
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
+@import 'primeicons/primeicons.css';
+
+.btn {
+    @apply shadow-lg py-3 px-6 rounded-md transition duration-200;
+  }
+  
+  .btn-purple {
+    @apply bg-bookmark-purple text-white;
+  }
+  
+  .router-link-active {
+    color: #ff4500;
+  }
+  
+  .btn-white {
+    @apply bg-slate-100;
+  }
+  
+  * {
+    scroll-behavior: smooth;
+  }
+  
+  .hover-underline-animation {
+    display: inline-block;
+    position: relative;
+    color: #333;
+  }
+  
+  .hover-underline-animation::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    transform: scaleX(0);
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: #e9623b;
+    transform-origin: bottom right;
+    transition: transform 0.25s ease-out;
+  }
+  
+  .hover-underline-animation:hover::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+  }
+
+  /* TipTap */
+  .tt ul,
+  .tt ol {
+    padding: 0 1rem;
+    margin: 1.25rem 1rem 1.25rem 0.4rem;
+
+    
+  }
+
+  .tt li{
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+  }
+
+  .tt ul{
+    list-style: disc;
+  }
+
+  .tt ol{
+    list-style: decimal;
+  }
+
+  .tt h1 {
+    font-size: 2em; /* 32px */
+    font-weight: bold;
+    margin: 0.67em 0;
+  }
+  
+  .tt h2 {
+    font-size: 1.5em; /* 24px */
+    font-weight: bold;
+    margin: 0.83em 0;
+  }
+  
+  .tt h3 {
+    font-size: 1.17em; /* 18.72px */
+    font-weight: bold;
+    margin: 1em 0;
+  }
+  
+  .tt h4 {
+    font-size: 1em; /* 16px */
+    font-weight: bold;
+    margin: 1.33em 0;
+  }
+  
+  .tt h5 {
+    font-size: 0.83em; /* 13.28px */
+    font-weight: bold;
+    margin: 1.67em 0;
+  }
+  
+  .tt h6 {
+    font-size: 0.67em; /* 10.72px */
+    font-weight: bold;
+    margin: 2.33em 0;
+  }
+  
+  .tt mark {
+    border-radius: 4px;
+  }
+
+  .tt blockquote {
+    margin: 1em 40px;
+    padding: 0.5em;
+    font-style: italic;
+    border-left: 4px solid #ccc;
+  }

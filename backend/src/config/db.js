@@ -29,11 +29,11 @@ const connectDB = async () => {
 
 const closeDB = async () => {
     if (mongoServer) {
-        await mongoose.connection.dropDatabase(); // Clear in-memory database
-        await mongoose.disconnect(); // Close Mongoose connection
-        await mongoServer.stop(); // Stop in-memory server
+        await mongoose.connection.dropDatabase();
+        await mongoose.disconnect();
+        await mongoServer.stop(); 
     } else {
-        await mongoose.disconnect(); // Disconnect from real database in non-test environments
+        await mongoose.disconnect();
     }
 };
 

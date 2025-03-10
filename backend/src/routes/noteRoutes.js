@@ -17,16 +17,18 @@ router.post('/', authenticate, async (req, res, next) => {
     const { title, keyPoints, detailedNotes, summary, folderId } = req.body;
 
     try {
+        // Include folderId when creating the note
         const note = new Note({
             title,
             keyPoints,
             detailedNotes,
             summary,
             user: req.user.id, // Associate note with the logged-in user
+            folderId: folderId || null, // Save the folder reference directly
         });
         const savedNote = await note.save();
 
-        // If a folderId is provided, add the note to the folder
+        // If a folderId is provided, also add the note to the folder's notes array
         if (folderId) {
             const folder = await Folder.findOne({ _id: folderId, user: req.user.id });
             if (folder) {
@@ -44,6 +46,7 @@ router.post('/', authenticate, async (req, res, next) => {
         next(err); // Forward unexpected errors to the error handler
     }
 });
+
 
 // Get all notes for the logged-in user
 router.get('/', authenticate, async (req, res, next) => {
@@ -96,19 +99,69 @@ router.put('/:id', [authenticate, validateObject], async (req, res, next) => {
     }
 });
 
+// PATCH /api/notes/:id/folder
+// PATCH /api/notes/:id/folder
+router.patch('/:id/folder', authenticate, async (req, res, next) => {
+    const { newFolderId } = req.body;
+    try {
+      // Find the note being moved
+      const note = await Note.findOne({ _id: req.params.id, user: req.user.id });
+      if (!note) {
+        return res.status(404).json({ error: 'Note not found' });
+      }
+      const oldFolderId = note.folderId ? note.folderId.toString() : null;
+      const newFolderIdStr = newFolderId ? newFolderId.toString() : null;
+      
+      // Update the note's folderId
+      note.folderId = newFolderId || null;
+      await note.save();
+  
+      // Update the parent's notes array:
+      // Remove the note from the old folder
+      if (oldFolderId && oldFolderId !== newFolderIdStr) {
+        await Folder.findOneAndUpdate(
+          { _id: oldFolderId, user: req.user.id },
+          { $pull: { notes: note._id } }
+        );
+      }
+      // Add the note to the new folder
+      if (newFolderId) {
+        await Folder.findOneAndUpdate(
+          { _id: newFolderId, user: req.user.id },
+          { $addToSet: { notes: note._id } }
+        );
+      }
+      res.status(200).json(note);
+    } catch (err) {
+      next(err);
+    }
+  });
+  
+
+
 // Delete a note by ID
+// DELETE /api/notes/:id
 router.delete('/:id', [authenticate, validateObject], async (req, res, next) => {
     try {
-        const deletedNote = await Note.findOneAndDelete({ _id: req.params.id, user: req.user.id });
-        if (!deletedNote) {
-            const error = new Error('Note not found');
-            error.status = 404; // Not Found
-            return next(error);
-        }
-        res.status(200).json({ message: 'Note deleted successfully' });
+      const note = await Note.findOne({ _id: req.params.id, user: req.user.id });
+      if (!note) {
+        return res.status(404).json({ error: 'Note not found' });
+      }
+      // Delete the note
+      await Note.deleteOne({ _id: note._id, user: req.user.id });
+      
+      // Remove the note from the folder's notes array
+      if (note.folderId) {
+        await Folder.findOneAndUpdate(
+          { _id: note.folderId, user: req.user.id },
+          { $pull: { notes: note._id } }
+        );
+      }
+      res.status(200).json({ message: 'Note deleted successfully' });
     } catch (err) {
-        next(err); // Forward unexpected errors to the error handler
+      next(err);
     }
-});
+  });
+  
 
 module.exports = router;

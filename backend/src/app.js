@@ -9,6 +9,7 @@ const authRoutes = require('./routes/authRoutes');
 const errorHandler = require('./middleware/errorHandler');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('../swagger.json');
+const cookieParser = require('cookie-parser');
 
 dotenv.config();
 
@@ -25,12 +26,13 @@ const corsOptions = {
         'http://localhost:3000', // Local frontend for development
         'https://www.cnoteweb.com', // Deployed frontend
     ],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE','PATCH'],
     credentials: true, // Allow cookies if needed
 };
 app.use(cors(corsOptions));
 
 // Middleware
+app.use(cookieParser());
 app.use(bodyParser.json());
 
 // Routes
@@ -39,6 +41,7 @@ app.use('/api/folders', folderRoutes);
 app.use('/api/auth', authRoutes);
 app.use(errorHandler);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 
 // Default test route
 app.get('/api', (req, res) => {

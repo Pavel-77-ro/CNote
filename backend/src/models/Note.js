@@ -12,12 +12,17 @@ const NoteSchema = new mongoose.Schema({
     },
     detailedNotes: {
         type: String, // Stores the detailed body of the note
-        required: false,
-        default: ''
+        default: '',
     },
     summary: {
         type: String, // Stores the summary of the note
         default: '',
+    },
+    // New field: folderId is optional and references a Folder document
+    folderId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Folder',
+        default: null,
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,

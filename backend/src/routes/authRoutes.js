@@ -5,6 +5,8 @@ const User = require('../models/User');
 const router = express.Router();
 const loginLimiter = require('../middleware/rateLimiter');
 const { registerSchema, loginSchema } = require('../utils/validation');
+const authenticate = require('../middleware/authMiddleware');
+
 
 
 // Register a new user
@@ -35,7 +37,8 @@ router.post('/register', async (req, res, next) => {
 });
 
 // Log in a user
-router.post('/login',loginLimiter, async (req, res, next) => {
+// Log in a user
+router.post('/login', loginLimiter, async (req, res, next) => {
     const { error } = loginSchema.validate(req.body);
     if (error) {
         return res.status(400).json({ error: error.details[0].message });
@@ -52,7 +55,7 @@ router.post('/login',loginLimiter, async (req, res, next) => {
         }
 
         // Generate Access Token
-        const accessToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '10m' });
+        const accessToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '20m' });
 
         // Generate Refresh Token
         const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
@@ -60,16 +63,25 @@ router.post('/login',loginLimiter, async (req, res, next) => {
         // Store the refresh token securely (e.g., HttpOnly cookie)
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', // Use HTTPS in production
-            sameSite: 'strict', // Protect against CSRF
-            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000,
         });
 
-        res.status(200).json({ accessToken, message: 'Login successful' });
+        // Return user info along with accessToken
+        res.status(200).json({
+            accessToken,
+            message: 'Login successful',
+            user: {
+                _id: user._id,
+                username: user.username,
+            }
+        });
     } catch (err) {
         next(err);
     }
 });
+
 
 router.post('/refresh', async (req, res, next) => {
     const refreshToken = req.cookies.refreshToken; // Get the token from the cookie
@@ -83,7 +95,7 @@ router.post('/refresh', async (req, res, next) => {
         const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
 
         // Generate a new access token
-        const accessToken = jwt.sign({ id: decoded.id }, process.env.JWT_SECRET, { expiresIn: '10m' });
+        const accessToken = jwt.sign({ id: decoded.id }, process.env.JWT_SECRET, { expiresIn: '20m' });
 
         res.status(200).json({ accessToken });
     } catch (err) {
@@ -99,6 +111,22 @@ router.post('/logout', (req, res) => {
     });
     res.status(200).json({ message: 'Logged out successfully' });
 });
+
+// Get the profile of the logged-in user
+router.get('/profile', authenticate, async (req, res, next) => {
+    try {
+        // Find the user by the ID attached to req.user by your auth middleware.
+        // Exclude sensitive fields like the password.
+        const user = await User.findById(req.user.id).select('-password');
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.status(200).json({ user });
+    } catch (err) {
+        next(err);
+    }
+});
+
 
 
 module.exports = router;

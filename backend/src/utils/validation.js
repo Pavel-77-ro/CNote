@@ -38,6 +38,7 @@ const folderSchema = Joi.object({
         'string.max': 'Folder name must not exceed 50 characters.',
         'any.required': 'Folder name is required.',
     }),
+    parentFolder: Joi.string().optional().allow(null),
 });
 
 // Schema for creating/updating a note
@@ -50,8 +51,6 @@ const noteSchema = Joi.object({
     }),
     detailedNotes: Joi.string().allow('').optional().messages({
         'string.base': 'Detailed notes must be a string.',
-        'string.empty': 'Detailed notes are required.',
-        'any.required': 'Detailed notes are required.',
     }),
     keyPoints: Joi.string().max(300).allow('').optional().messages({
         'string.base': 'Key points must be a string.',
@@ -61,6 +60,10 @@ const noteSchema = Joi.object({
         'string.base': 'Summary must be a string.',
         'string.max': 'Summary must not exceed 300 characters.',
     }),
+    folderId: Joi.string().optional().allow(null).messages({
+        'string.base': 'Folder ID must be a string.',
+    }),
 });
+
 
 module.exports = { registerSchema, loginSchema, folderSchema, noteSchema };
