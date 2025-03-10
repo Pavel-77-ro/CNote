@@ -15,7 +15,6 @@ const emit = defineEmits(['submitForm'])
 const username = ref('')
 const password = ref('')
 
-// Track if the user has interacted with the fields
 const usernameTouched = ref(false)
 const passwordTouched = ref(false)
 
@@ -27,7 +26,6 @@ function onPasswordBlur() {
   passwordTouched.value = true
 }
 
-// Compute errors only if the field has been touched
 const usernameError = computed(() => {
   if (!usernameTouched.value) return ''
   if (!username.value) return 'Username is required.'
@@ -45,7 +43,6 @@ const isFormValid = computed(() => {
 })
 
 function submitForm() {
-  // Mark fields as touched so errors show if invalid
   usernameTouched.value = true
   passwordTouched.value = true
   

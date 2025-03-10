@@ -1,16 +1,15 @@
 const request = require('supertest');
 const { connectDB, closeDB } = require('../src/config/db');
 const app = require('../src/app');
-const { noteSchema } = require('../src/utils/validation'); // Adjust the path as needed
+const { noteSchema } = require('../src/utils/validation'); 
 
 
 describe('Note Routes', () => {
     let accessToken;
 
     beforeAll(async () => {
-        await connectDB(); // Connect to in-memory MongoDB
+        await connectDB(); 
 
-        // Register and login a test user
         await request(app)
             .post('/api/auth/register')
             .send({ username: 'noteuser', password: 'password123' });
@@ -19,11 +18,11 @@ describe('Note Routes', () => {
             .post('/api/auth/login')
             .send({ username: 'noteuser', password: 'password123' });
 
-        accessToken = loginResponse.body.accessToken; // Store access token for authenticated requests
+        accessToken = loginResponse.body.accessToken; 
     });
 
     afterAll(async () => {
-        await closeDB(); // Clean up the database
+        await closeDB(); 
     });
 
     describe('POST /notes', () => {
@@ -121,7 +120,7 @@ describe('Note Routes', () => {
 
         test('Should return 404 for deleting a non-existent note', async () => {
             const response = await request(app)
-                .delete(`/api/notes/${noteId}`) // Use already deleted note ID
+                .delete(`/api/notes/${noteId}`) 
                 .set('Authorization', `Bearer ${accessToken}`);
 
             expect(response.statusCode).toBe(404);

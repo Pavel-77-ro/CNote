@@ -14,7 +14,6 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'confirm-move']);
 
-// Helper: Check whether a folder is a descendant of the target folder.
 function isDescendant(folder, targetId) {
   let currentParent = folder.parentFolder;
   while (currentParent) {
@@ -35,7 +34,6 @@ function onSelectParent(folderId) {
   });
 }
 
-// Compute the position from moveCandidate.position; default to { top: 0, left: 0 }
 const movePosition = computed(() => {
   return props.moveCandidate.position || { top: 0, left: 0 };
 });
@@ -58,7 +56,6 @@ const movePosition = computed(() => {
 
     <!-- List of possible destinations -->
     <ul class="py-1 max-h-64 overflow-auto text-sm">
-      <!-- Top Level option -->
       <li
         @click="onSelectParent(null)"
         class="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
@@ -66,7 +63,6 @@ const movePosition = computed(() => {
         <i class="pi pi-inbox mr-2 text-gray-600"></i>
         Top Level
       </li>
-      <!-- Other folders excluding the moving folder and its descendants -->
       <li
         v-for="folder in allFolders.filter(f => f._id !== moveCandidate.node._id && !isDescendant(f, moveCandidate.node._id))"
         :key="folder._id"

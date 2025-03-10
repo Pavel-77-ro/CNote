@@ -3,18 +3,17 @@ import { defineStore } from 'pinia'
 import axiosInstance from '@/services/axiosInstance'
 
 export const useNoteStore = defineStore('note', () => {
-  // State
+ 
   const notes = ref([])
   const loading = ref(false)
   const error = ref(null)
-  const selectedNote = ref(null)  // New property for the currently selected note
+  const selectedNote = ref(null)  
 
-  // Actions
+  
   async function fetchNotes() {
     loading.value = true
     try {
       const response = await axiosInstance.get('/notes')
-      // Assuming the API returns an array of notes
       notes.value = response.data
     } catch (err) {
       error.value = err
@@ -26,7 +25,6 @@ export const useNoteStore = defineStore('note', () => {
 
   async function createNote(noteData) {
     try {
-      // noteData should include { title, keyPoints, detailedNotes, summary, folderId (optional) }
       const response = await axiosInstance.post('/notes', noteData)
       notes.value.push(response.data)
       return response.data

@@ -33,14 +33,11 @@ onBeforeUnmount(() => {
 
 <template>
   <main class="relative flex h-svh ">
-    <!-- Hamburger Button for Folder Menu (small screens) -->
-
     <button
      v-if="!folderMenuOpen"
       class="absolute top-1 left-0 z-50 bg-gray-600 w-8 h-8 rounded-full shadow-md shadow-slate-400 xl:hidden"
       @click.stop="toggleFolderMenu"
     >
-      <!-- Show an icon that indicates folder menu toggle -->
       <i class="pi pi-folder-open text-white"></i>
     </button>
 

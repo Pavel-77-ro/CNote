@@ -7,18 +7,18 @@ const NoteSchema = new mongoose.Schema({
         trim: true,
     },
     keyPoints: {
-        type: String, // Stores the key points/questions
+        type: String,
         default: '',
     },
     detailedNotes: {
-        type: String, // Stores the detailed body of the note
+        type: String, 
         default: '',
     },
     summary: {
-        type: String, // Stores the summary of the note
+        type: String, 
         default: '',
     },
-    // New field: folderId is optional and references a Folder document
+
     folderId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Folder',
@@ -26,7 +26,7 @@ const NoteSchema = new mongoose.Schema({
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', // Reference to the user who owns this note
+        ref: 'User',
         required: true,
     },
     createdAt: {

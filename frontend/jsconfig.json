@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "baseUrl": "frontend", // Add this to define the base URL
+    "baseUrl": "frontend", 
     "paths": {
-      "@/*": ["src/*"] // Adjust to resolve from "frontend/src"
+      "@/*": ["src/*"] 
     }
   },
   "exclude": ["node_modules", "dist"]

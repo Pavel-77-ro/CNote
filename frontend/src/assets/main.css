@@ -70,37 +70,37 @@
   }
 
   .tt h1 {
-    font-size: 2em; /* 32px */
+    font-size: 2em;
     font-weight: bold;
     margin: 0.67em 0;
   }
   
   .tt h2 {
-    font-size: 1.5em; /* 24px */
+    font-size: 1.5em;
     font-weight: bold;
     margin: 0.83em 0;
   }
   
   .tt h3 {
-    font-size: 1.17em; /* 18.72px */
+    font-size: 1.17em;
     font-weight: bold;
     margin: 1em 0;
   }
   
   .tt h4 {
-    font-size: 1em; /* 16px */
+    font-size: 1em; 
     font-weight: bold;
     margin: 1.33em 0;
   }
   
   .tt h5 {
-    font-size: 0.83em; /* 13.28px */
+    font-size: 0.83em; 
     font-weight: bold;
     margin: 1.67em 0;
   }
   
   .tt h6 {
-    font-size: 0.67em; /* 10.72px */
+    font-size: 0.67em;
     font-weight: bold;
     margin: 2.33em 0;
   }

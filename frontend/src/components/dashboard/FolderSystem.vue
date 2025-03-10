@@ -15,22 +15,16 @@ const userStore = useUserStore()
 const router = useRouter()
 const noteStore = useNoteStore()
 
-// Fetch folders from the backend when the component mounts
 onMounted(() => {
   folderStore.fetchFolders()
   noteStore.fetchNotes()
 })
 
-// Replace local folders with the store's data
 const folders = computed(() => folderStore.folders)
 
-// State for move candidate modal
 const moveCandidate = ref(null)
 
 
-
-
-// Provide creation functions to FolderItem children
 function createFolder(parent) {
   const folderData = {
     name: 'New Folder',
@@ -49,9 +43,7 @@ async function handleDelete({ type, id }) {
       await folderStore.fetchFolders();
       await noteStore.fetchNotes();
     } else {
-      // It's a note
       await noteStore.deleteNote(id);
-      // Optionally refresh folder data if you want the UI to reflect changes
       await folderStore.fetchFolders();
       await noteStore.fetchNotes();
     }
@@ -63,15 +55,12 @@ async function handleDelete({ type, id }) {
 async function handleRename(payload) {
   try {
     if (payload.type === 'folder') {
-      // rename a folder
       const { node, newName } = payload;
       await folderStore.updateFolder(node._id, { name: newName, parentFolder: node.parentFolder });
       await folderStore.fetchFolders();
     } else {
-      // rename a note
       const { node, newTitle } = payload;
       await noteStore.updateNote(node._id, { title: newTitle });
-      // Possibly refresh the folder store if you want the new note title to appear
       await folderStore.fetchFolders();
     }
   } catch (error) {
@@ -97,11 +86,10 @@ async function moveNode({ node, newParentId }) {
     if (node.type === 'folder') {
       await folderStore.moveFolder(node._id, newParentId);
     } else {
-      // It's a note
       await noteStore.moveNote(node._id, newParentId);
     }
     moveCandidate.value = null;
-    // Re-fetch folder data to reflect the changes
+    
     
   } catch (error) {
     notification.showNotification(error.response?.data?.error || 'Error moving item.');
@@ -141,16 +129,15 @@ function handleSelectNote(note) {
 
 function createNote(parent) {
   const noteData = {
-    title: 'New Note',                   // default title
-    keyPoints: 'Your Keywords Are Here',                       // empty key points initially
-    detailedNotes: 'Your Notes Come Here',  // default body
-    summary: 'Your Summary Should Be Here',                         // empty summary
-    folderId: parent ? parent._id : null,  // assign to folder if provided
+    title: 'New Note',                   
+    keyPoints: 'Your Keywords Are Here',                       
+    detailedNotes: 'Your Notes Come Here',  
+    summary: 'Your Summary Should Be Here',                         
+    folderId: parent ? parent._id : null, 
   }
   noteStore.createNote(noteData)
     .then(() => {
       console.log('New note created:', noteData)
-      // Optionally, refresh folder data if the folder's notes list should update:
       folderStore.fetchFolders()
     })
     .catch(error => {
@@ -163,23 +150,20 @@ const otherNotes = computed(() => {
     .filter(note => !note.folderId)
     .map(note => ({
       ...note,
-      type: 'note',  // Ensure each item is recognized as a note
+      type: 'note',
     }));
 });
 
 
 
 const nestedFolders = computed(() => {
-  // First, map each folder from the store to include a "children" array.
-  // Also, if the folder has notes, convert them to objects with type "note".
   const foldersWithChildren = folderStore.folders.map(folder => {
-    // Create a copy and add a children array.
     const folderCopy = {
       ...folder,
       children: [],
-      type: folder.type || 'folder', // Ensure the folder has a type
+      type: folder.type || 'folder',
     };
-    // If the folder has populated notes, map them into objects with type 'note'
+   
     if (folder.notes && folder.notes.length) {
       folderCopy.children = folder.notes.map(note => ({
         ...note,
@@ -189,21 +173,18 @@ const nestedFolders = computed(() => {
     return folderCopy;
   });
 
-  // Build a map of folder _id to folder object.
+
   const map = {};
   foldersWithChildren.forEach(folder => {
     map[folder._id] = folder;
   });
 
   const tree = [];
-  // Now, for each folder, if it has a parentFolder, add it as a child of that parent.
   foldersWithChildren.forEach(folder => {
     if (folder.parentFolder) {
       if (map[folder.parentFolder]) {
-        // Append the folder to its parent's children array.
         map[folder.parentFolder].children.push(folder);
       } else {
-        // If no parent is found, treat it as a top-level folder.
         tree.push(folder);
       }
     } else {
@@ -214,7 +195,6 @@ const nestedFolders = computed(() => {
 });
 
 
-// Compute a flat list of all folders for the move modal
 const allFolders = computed(() => {
   const list = []
   function traverse(items) {
@@ -254,11 +234,9 @@ const allFolders = computed(() => {
             class="absolute top-8 right-6 mt-1 w-48 bg-white border border-gray-300 rounded-lg shadow-md z-10"
           >
             <ul class="py-1 text-gray-700 text-sm">
-              <!-- Display username -->
               <li class="px-4 py-2 border-b">
                 Username: {{ userStore.user?.username || 'Guest' }}
               </li>
-              <!-- Logout button -->
               <li
                 @click="logout"
                 class="px-4 py-2 hover:bg-red-100 cursor-pointer text-red-600"
@@ -327,7 +305,6 @@ const allFolders = computed(() => {
 </template>
 
 <style scoped>
-/* Optional fade transition for the dropdown */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.1s;

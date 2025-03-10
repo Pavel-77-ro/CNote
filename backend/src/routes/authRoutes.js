@@ -19,24 +19,23 @@ router.post('/register', async (req, res, next) => {
     const { username, password } = req.body;
 
     try {
-        // Check if the username is already taken
+        
         const existingUser = await User.findOne({ username });
         if (existingUser) {
             const error = new Error('Username already exists');
-            error.status = 400; // Bad Request
+            error.status = 400;
             return next(error);
         }
 
-        // Create and save the new user
+        
         const user = new User({ username, password });
         await user.save();
         res.status(201).json({ message: 'User registered successfully' });
     } catch (err) {
-        next(err); // Forward unexpected errors to the error handler
+        next(err); 
     }
 });
 
-// Log in a user
 // Log in a user
 router.post('/login', loginLimiter, async (req, res, next) => {
     const { error } = loginSchema.validate(req.body);
@@ -60,7 +59,6 @@ router.post('/login', loginLimiter, async (req, res, next) => {
         // Generate Refresh Token
         const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
 
-        // Store the refresh token securely (e.g., HttpOnly cookie)
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
@@ -68,7 +66,6 @@ router.post('/login', loginLimiter, async (req, res, next) => {
             maxAge: 7 * 24 * 60 * 60 * 1000,
         });
 
-        // Return user info along with accessToken
         res.status(200).json({
             accessToken,
             message: 'Login successful',
@@ -84,7 +81,7 @@ router.post('/login', loginLimiter, async (req, res, next) => {
 
 
 router.post('/refresh', async (req, res, next) => {
-    const refreshToken = req.cookies.refreshToken; // Get the token from the cookie
+    const refreshToken = req.cookies.refreshToken; 
 
     if (!refreshToken) {
         return res.status(401).json({ error: 'No refresh token provided' });
@@ -112,11 +109,8 @@ router.post('/logout', (req, res) => {
     res.status(200).json({ message: 'Logged out successfully' });
 });
 
-// Get the profile of the logged-in user
 router.get('/profile', authenticate, async (req, res, next) => {
     try {
-        // Find the user by the ID attached to req.user by your auth middleware.
-        // Exclude sensitive fields like the password.
         const user = await User.findById(req.user.id).select('-password');
         if (!user) {
             return res.status(404).json({ error: 'User not found' });

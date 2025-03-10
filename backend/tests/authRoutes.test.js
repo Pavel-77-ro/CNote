@@ -1,6 +1,6 @@
 const request = require('supertest');
 const { connectDB, closeDB } = require('../src/config/db');
-const app = require('../src/app'); // Adjust the path to your app if needed
+const app = require('../src/app'); 
 
 describe('Auth Routes', () => {
     beforeAll(async () => {
@@ -9,7 +9,6 @@ describe('Auth Routes', () => {
     });
 
     afterAll(async () => {
-        // Disconnect from MongoDB and clean up the in-memory server
         await closeDB();
     });
 
@@ -30,7 +29,7 @@ describe('Auth Routes', () => {
             const response = await request(app)
                 .post('/api/auth/register')
                 .send({
-                    username: 'testuser', // Duplicate username
+                    username: 'testuser',
                     password: 'password123',
                 });
 
@@ -41,7 +40,6 @@ describe('Auth Routes', () => {
 
     describe('POST /auth/login', () => {
         beforeAll(async () => {
-            // Seed a user for login tests
             await request(app)
                 .post('/api/auth/register')
                 .send({

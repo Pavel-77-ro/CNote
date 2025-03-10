@@ -27,7 +27,6 @@ const focusEditor = (section) => {
 
 function handleMediaChange(e) {
   if (e.matches) {
-    // If we're moving into large screens, close the toolbar
     toolbarOpen.value = false
   }
 }
@@ -35,7 +34,7 @@ function handleMediaChange(e) {
 function saveCurrentNote() {
   if (noteStore.selectedNote) {
     const updatedNoteData = {
-      title: noteStore.selectedNote.title,  // For now, we assume title is not edited via editor
+      title: noteStore.selectedNote.title,  
       keyPoints: cornellNotes.value.keywords,
       detailedNotes: cornellNotes.value.mainNotes,
       summary: cornellNotes.value.summary,
@@ -44,7 +43,7 @@ function saveCurrentNote() {
     noteStore.updateNote(noteStore.selectedNote._id, updatedNoteData)
       .then(() => {
         console.log('Note saved successfully.');
-        noteStore.fetchNotes(); // Refresh notes if needed
+        noteStore.fetchNotes(); 
         if (noteStore.selectedNote.folderId) {
           folderStore.fetchFolders();
         }
@@ -68,13 +67,11 @@ onBeforeUnmount(() => {
 });
 
 
-// Fetch notes when the component mounts
 onMounted(() => {
   noteStore.fetchNotes();
   mediaQuery.addEventListener('change', handleMediaChange)
 });
 
-// State for Cornell Notes
 const cornellNotes = ref({
   keywords: '<p>Click here to add keywords...</p>',
   mainNotes: '<p>Click here to add notes...</p>',
@@ -113,7 +110,6 @@ onMounted(() => {
   });
 });
 
-// Cleanup editors on component unmount
 onBeforeUnmount(() => {
   mediaQuery.removeEventListener('change', handleMediaChange);
   Object.values(editors.value).forEach((editor) => {
@@ -127,12 +123,10 @@ watch(
   () => noteStore.selectedNote,
   (newNote) => {
     if (newNote) {
-      // Load the note content into your editor sections
       cornellNotes.value.keywords = newNote.keyPoints || '<p></p>';
       cornellNotes.value.mainNotes = newNote.detailedNotes || '<p></p>';
       cornellNotes.value.summary = newNote.summary || '<p></p>';
       
-      // Update each editor with the new content
       if (editors.value.keywords) {
         editors.value.keywords.commands.setContent(cornellNotes.value.keywords);
       }
@@ -156,7 +150,6 @@ watch(
       @click="toggleToolbar"
       :class="{'transform -translate-x-20':toolbarOpen}"
     >
-      <!-- Show arrow-left if toolbar is closed, arrow-right if open -->
       <i v-if="!toolbarOpen" class="pi pi-angle-left text-gray-100"></i>
       <i v-else class="pi pi-angle-right text-gray-100"></i>
     </button>

@@ -99,22 +99,20 @@ function createNewNote() {
   showOptions.value = false;
 }
 
-// NEW: onRequestMove accepts the click event to compute position.
+
 function onRequestMove(event) {
-  // Stop propagation so the container click isn't triggered.
   event.stopPropagation();
-  // Get the bounding rectangle of the clicked element.
   const rect = event.currentTarget.getBoundingClientRect();
   emit('request-move', {
     node: props.node,
     siblings: props.siblings,
-    // Save the position (adjust offsets as needed)
+
     position: { top: rect.bottom + window.scrollY, left: rect.left + window.scrollX +60 }
   });
-  //showOptions.value = false;
+
 }
 
-// Called when user clicks the container.
+
 function onContainerClick() {
   if (props.node.type === 'note' && !editing.value) {
     emit('select-note', props.node);

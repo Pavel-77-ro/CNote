@@ -1,4 +1,3 @@
-// src/services/authService.js
 import axiosInstance from './axiosInstance';
 
 export const loginUser = (credentials) => {

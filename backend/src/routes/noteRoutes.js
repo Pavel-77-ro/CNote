@@ -17,18 +17,16 @@ router.post('/', authenticate, async (req, res, next) => {
     const { title, keyPoints, detailedNotes, summary, folderId } = req.body;
 
     try {
-        // Include folderId when creating the note
         const note = new Note({
             title,
             keyPoints,
             detailedNotes,
             summary,
-            user: req.user.id, // Associate note with the logged-in user
-            folderId: folderId || null, // Save the folder reference directly
+            user: req.user.id,
+            folderId: folderId || null, 
         });
         const savedNote = await note.save();
 
-        // If a folderId is provided, also add the note to the folder's notes array
         if (folderId) {
             const folder = await Folder.findOne({ _id: folderId, user: req.user.id });
             if (folder) {
@@ -36,14 +34,14 @@ router.post('/', authenticate, async (req, res, next) => {
                 await folder.save();
             } else {
                 const error = new Error('Folder not found');
-                error.status = 404; // Not Found
+                error.status = 404; 
                 return next(error);
             }
         }
 
         res.status(201).json(savedNote);
     } catch (err) {
-        next(err); // Forward unexpected errors to the error handler
+        next(err); 
     }
 });
 
@@ -54,7 +52,7 @@ router.get('/', authenticate, async (req, res, next) => {
         const notes = await Note.find({ user: req.user.id });
         res.status(200).json(notes);
     } catch (err) {
-        next(err); // Forward unexpected errors to the error handler
+        next(err); 
     }
 });
 
@@ -69,7 +67,7 @@ router.get('/:id',[authenticate, validateObject], async (req, res, next) => {
         }
         res.status(200).json(note);
     } catch (err) {
-        next(err); // Forward unexpected errors to the error handler
+        next(err);
     }
 });
 
@@ -95,16 +93,14 @@ router.put('/:id', [authenticate, validateObject], async (req, res, next) => {
         }
         res.status(200).json(updatedNote);
     } catch (err) {
-        next(err); // Forward unexpected errors to the error handler
+        next(err);
     }
 });
 
 // PATCH /api/notes/:id/folder
-// PATCH /api/notes/:id/folder
 router.patch('/:id/folder', authenticate, async (req, res, next) => {
     const { newFolderId } = req.body;
     try {
-      // Find the note being moved
       const note = await Note.findOne({ _id: req.params.id, user: req.user.id });
       if (!note) {
         return res.status(404).json({ error: 'Note not found' });
@@ -112,19 +108,15 @@ router.patch('/:id/folder', authenticate, async (req, res, next) => {
       const oldFolderId = note.folderId ? note.folderId.toString() : null;
       const newFolderIdStr = newFolderId ? newFolderId.toString() : null;
       
-      // Update the note's folderId
       note.folderId = newFolderId || null;
       await note.save();
   
-      // Update the parent's notes array:
-      // Remove the note from the old folder
       if (oldFolderId && oldFolderId !== newFolderIdStr) {
         await Folder.findOneAndUpdate(
           { _id: oldFolderId, user: req.user.id },
           { $pull: { notes: note._id } }
         );
       }
-      // Add the note to the new folder
       if (newFolderId) {
         await Folder.findOneAndUpdate(
           { _id: newFolderId, user: req.user.id },
@@ -140,17 +132,14 @@ router.patch('/:id/folder', authenticate, async (req, res, next) => {
 
 
 // Delete a note by ID
-// DELETE /api/notes/:id
 router.delete('/:id', [authenticate, validateObject], async (req, res, next) => {
     try {
       const note = await Note.findOne({ _id: req.params.id, user: req.user.id });
       if (!note) {
         return res.status(404).json({ error: 'Note not found' });
       }
-      // Delete the note
       await Note.deleteOne({ _id: note._id, user: req.user.id });
       
-      // Remove the note from the folder's notes array
       if (note.folderId) {
         await Folder.findOneAndUpdate(
           { _id: note.folderId, user: req.user.id },

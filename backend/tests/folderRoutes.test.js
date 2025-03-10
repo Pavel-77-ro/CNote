@@ -6,9 +6,8 @@ describe('Folder Routes', () => {
     let accessToken;
 
     beforeAll(async () => {
-        await connectDB(); // Connect to in-memory MongoDB
+        await connectDB(); 
 
-        // Register and login a test user
         await request(app)
             .post('/api/auth/register')
             .send({ username: 'folderuser', password: 'password123' });
@@ -17,11 +16,11 @@ describe('Folder Routes', () => {
             .post('/api/auth/login')
             .send({ username: 'folderuser', password: 'password123' });
 
-        accessToken = loginResponse.body.accessToken; // Store access token for authenticated requests
+        accessToken = loginResponse.body.accessToken; 
     });
 
     afterAll(async () => {
-        await closeDB(); // Clean up the database
+        await closeDB(); 
     });
 
     describe('POST /folders', () => {
@@ -111,7 +110,7 @@ describe('Folder Routes', () => {
 
         test('Should return 404 for deleting a non-existent folder', async () => {
             const response = await request(app)
-                .delete(`/api/folders/${folderId}`) // Use already deleted folder ID
+                .delete(`/api/folders/${folderId}`) 
                 .set('Authorization', `Bearer ${accessToken}`);
 
             expect(response.statusCode).toBe(404);
