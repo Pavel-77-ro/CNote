@@ -1,8 +1,11 @@
+// src/services/axiosInstance.js
 import axios from 'axios';
+import router from '@/router'; // import your Vue Router instance
+import { useUserStore } from '@/stores/userStore';
 
 const axiosInstance = axios.create({
   baseURL: 'http://localhost:5000/api',
-  withCredentials: true, 
+  withCredentials: true,
 });
 
 axiosInstance.interceptors.request.use(
@@ -20,19 +23,25 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (error.response && error.response.status === 401 && !originalRequest._retry) {
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      !originalRequest._retry
+    ) {
       originalRequest._retry = true;
       try {
-        // Call the refresh endpoint without a request body.
         const refreshResponse = await axiosInstance.post('/auth/refresh');
         const newAccessToken = refreshResponse.data.accessToken;
         localStorage.setItem('authToken', newAccessToken);
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
-        // If refresh fails, you might want to log out the user here.
         console.error('Token refresh failed:', refreshError);
-        // Optionally, redirect to login or clear auth data.
+        // Logout the user on refresh failure
+        const userStore = useUserStore();
+        userStore.logout();
+        // Redirect to login page
+        router.push({ name: 'login' });
         return Promise.reject(refreshError);
       }
     }

@@ -47,6 +47,7 @@ CNote is a full‑stack note‑taking application designed around the Cornell No
   - MongoDB & Mongoose  
   - JWT & bcrypt for authentication and security  
   - Swagger‑UI for API documentation
+  - Jest & Supertest for testing
 
 ## Installation
 
