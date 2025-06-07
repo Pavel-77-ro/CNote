@@ -4,7 +4,7 @@ import router from '@/router'; // import your Vue Router instance
 import { useUserStore } from '@/stores/userStore';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
 });
 

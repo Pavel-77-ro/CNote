@@ -146,7 +146,7 @@ watch(
   <main class="font-Poppins h-full w-full p-6 lg:pr-0 lg:pt-6 lg:pb-6 lg:pl-4 tt">
     
     <button
-      class="absolute top-1/2 right-0 bg-orange-400 py-2 rounded-full z-50 block lg:hidden "
+      class="absolute top-1/2 right-0 bg-orange-400 p-2 pb-1 rounded-full z-50 block lg:hidden "
       @click="toggleToolbar"
       :class="{'transform -translate-x-20':toolbarOpen}"
     >

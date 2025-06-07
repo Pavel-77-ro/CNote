@@ -56,7 +56,7 @@ onBeforeUnmount(() => {
       <FolderSystem />
     </div>
 
-    <!-- Main Scene (Note Editor) -->
+    <!-- Main Scene -->
     <div class="w-full xl:w-[82%] 2xl:w-[84%] h-full">
       <MainScene />
     </div>
