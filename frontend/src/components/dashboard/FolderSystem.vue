@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, computed, provide } from 'vue'
+import { onMounted,  ref, computed, provide } from 'vue'
 import { useFolderStore } from '@/stores/folderStore'
 import { useUserStore } from '@/stores/userStore'
 import FolderItem from './FolderItem.vue'
@@ -15,10 +15,6 @@ const userStore = useUserStore()
 const router = useRouter()
 const noteStore = useNoteStore()
 
-onMounted(() => {
-  folderStore.fetchFolders()
-  noteStore.fetchNotes()
-})
 
 const folders = computed(() => folderStore.folders)
 
@@ -32,6 +28,34 @@ function createFolder(parent) {
   }
   folderStore.createFolder(folderData)
 }
+
+function handleKeyDown(e) {
+  if (e.repeat) return
+  if (['INPUT', 'TEXTAREA'].includes(
+        document.activeElement.tagName)) return
+
+  if (e.ctrlKey) {
+    const key = e.key.toLowerCase()
+    if (key === 'q') {
+      e.preventDefault()
+      createFolder(null)
+    } else if (key === 'p') {
+      e.preventDefault()
+      createNote(null)
+    }
+  }
+}
+
+onMounted(() => {
+  
+  if (!window.__sidebarKeydownAttached) {
+    window.addEventListener('keydown', handleKeyDown)
+    window.__sidebarKeydownAttached = true
+  }
+
+  folderStore.fetchFolders()
+  noteStore.fetchNotes()
+})
 
 provide('createFolder', createFolder)
 provide('createNote', createNote)
@@ -102,12 +126,6 @@ async function moveNode({ node, newParentId }) {
 }
 
 
-
-
-
-// ---------------------------
-// New: User Options Pop-up
-// ---------------------------
 const showUserOptions = ref(false)
 
 function toggleUserOptions() {

@@ -41,6 +41,7 @@ CNote is a full‑stack note‑taking application designed around the Cornell No
   - Axios for HTTP requests  
   - TipTap for rich text editing  
   - TailwindCSS for styling
+  - Vitest for testing
 
 - **Backend:**  
   - Node.js & Express  
@@ -75,3 +76,4 @@ CNote is a full‑stack note‑taking application designed around the Cornell No
    cd frontend
 2. Install dependencies with `npm install`
 3. Type `npm run dev` for starting the client on port 3000
+4. Type `npm run test` for running the proof of concept tests for FolderSystem component

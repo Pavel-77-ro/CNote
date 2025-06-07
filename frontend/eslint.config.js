@@ -16,4 +16,15 @@ export default [
   js.configs.recommended,
   ...pluginVue.configs['flat/essential'],
   skipFormatting,
+
+  {
+    name: 'app/vitest-globals',
+    files: ['**/*.spec.{js,ts}', '**/*.test.{js,ts}'],
+    languageOptions: {
+      env: {
+
+        'vitest/globals': true
+      }
+    }
+  }
 ]

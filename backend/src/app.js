@@ -19,12 +19,14 @@ if (process.env.NODE_ENV !== 'test') {
     connectDB();
 }
 
+const FRONTEND_URLS = (process.env.CLIENT_URLS || '')
+  .split(',')
+  .map(u => u.trim())
+  .filter(Boolean)
+
 
 const corsOptions = {
-    origin: [
-        'http://localhost:3000', 
-        'https://www.cnoteweb.com', 
-    ],
+    origin: FRONTEND_URLS,
     methods: ['GET', 'POST', 'PUT', 'DELETE','PATCH'],
     credentials: true, 
 };
